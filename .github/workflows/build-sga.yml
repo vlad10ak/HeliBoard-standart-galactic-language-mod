@@ -1,0 +1,25 @@
+name: Build SGA keyboard
+on: workflow_dispatch
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: Helium314/HeliBoard
+          path: HeliBoard
+          submodules: recursive
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - name: Apply patch and build
+        run: |
+          cd HeliBoard
+          git apply ../heliboard-sga.patch
+          ./gradlew assembleDebug
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sga-keyboard-apk
+          path: HeliBoard/app/build/outputs/apk/**/*.apk
